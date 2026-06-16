@@ -1,0 +1,14 @@
+:root {
+  --color-primary: #ff724e;
+  --color-background: #ffffff;
+  --color-text: #1a1a1a;
+  --color-text-light: #888888;
+  --color-border: #eeeeee;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: "Pretendard", sans-serif;
+}
