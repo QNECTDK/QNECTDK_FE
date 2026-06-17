@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import VoteResult from "./pages/VoteResult";
 import BottomNav from "./components/BottomNav";
+import Home from "./pages/Home";
 
 function AppContent() {
   const location = useLocation();
@@ -28,6 +29,7 @@ function AppContent() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/vote-result" element={<VoteResult />} />
+        <Route path="/home" element={<Home />} />
       </Routes>
       {showNav && <BottomNav />}
     </div>
