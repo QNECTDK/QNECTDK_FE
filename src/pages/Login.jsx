@@ -17,7 +17,6 @@ function Login() {
       <div style={{ textAlign: "center", margin: "60px 0" }}>
         <img src={logo} alt="Qnect 로고" width={150} />
       </div>
-
       <Input
         label="아이디"
         type="text"
