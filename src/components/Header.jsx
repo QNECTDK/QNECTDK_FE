@@ -10,6 +10,7 @@ function Header({ title, onBack, rightButton }) {
         justifyContent: "center",
         padding: "16px 0",
         marginBottom: "8px",
+        borderBottom: "1px solid #eee",
       }}
     >
       {onBack && (

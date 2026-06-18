@@ -8,6 +8,9 @@ import Home from "./pages/Home";
 import QrCode from "./pages/QrCode";
 import QrScan from "./pages/QrScan";
 import FriendAccept from "./pages/FriendAccept";
+import MyPage from "./pages/MyPage";
+import CharacterChange from "./pages/CharacterChange";
+import InterestSelect from "./pages/InterestSelect";
 
 function AppContent() {
   const location = useLocation();
@@ -30,20 +33,36 @@ function AppContent() {
         boxShadow: "0 0 20px rgba(0,0,0,0.1)",
         display: "flex",
         flexDirection: "column",
-        overflowY: "auto",
         position: "relative",
+        overflow: "hidden",
       }}
     >
-      <Routes>
-        <Route path="/" element={<Splash />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/vote-result" element={<VoteResult />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/qr-code" element={<QrCode />} />
-        <Route path="/qr-scan" element={<QrScan />} />
-        <Route path="/friend-accept" element={<FriendAccept />} />
-      </Routes>
+      {/* 상태바 영역 (시간/배터리 자리, 비워둠) */}
+      <div style={{ height: "24px", flexShrink: 0 }} />
+
+      <div
+        style={{
+          flex: 1,
+          minHeight: 0,
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <Routes>
+          <Route path="/" element={<Splash />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/vote-result" element={<VoteResult />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/qr-code" element={<QrCode />} />
+          <Route path="/qr-scan" element={<QrScan />} />
+          <Route path="/friend-accept" element={<FriendAccept />} />
+          <Route path="/mypage" element={<MyPage />} />
+          <Route path="/character-change" element={<CharacterChange />} />
+          <Route path="/interest-select" element={<InterestSelect />} />
+        </Routes>
+      </div>
+
       {showNav && <BottomNav />}
     </div>
   );

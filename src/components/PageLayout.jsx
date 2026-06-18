@@ -7,6 +7,8 @@ function PageLayout({ children }) {
         flex: 1,
         display: "flex",
         flexDirection: "column",
+        overflowY: "auto",
+        minHeight: 0,
       }}
     >
       {children}

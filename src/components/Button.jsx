@@ -10,18 +10,22 @@ function Button({ label, onClick, variant = "primary", size = "full" }) {
   };
 
   return (
-    <button
+    <div
       onClick={onClick}
       style={{
         ...styles[variant],
         ...sizes[size],
         borderRadius: "8px",
-        border: "none",
         fontSize: "16px",
+        textAlign: "center",
+        cursor: "pointer",
+        boxSizing: "border-box",
+        display: "block",
+        lineHeight: "1.5",
       }}
     >
       {label}
-    </button>
+    </div>
   );
 }
 

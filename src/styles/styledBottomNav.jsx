@@ -7,9 +7,11 @@ export const NavContainer = styled.div`
   align-items: center;
   padding: 0 10px;
   border-top: 1px solid #f0f0f0;
-  position: absolute;
+  position: fixed;
   bottom: 0;
-  width: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 393px;
   height: 75px;
   background-color: white;
   box-sizing: border-box;

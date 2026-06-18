@@ -44,3 +44,10 @@ body {
 #qr-reader__header_message {
   display: none !important;
 }
+
+.tag-scroll::-webkit-scrollbar {
+  display: none;
+}
+.tag-scroll {
+  scrollbar-width: none;
+}
