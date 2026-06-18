@@ -7,10 +7,18 @@ import BottomNav from "./components/BottomNav";
 import Home from "./pages/Home";
 import QrCode from "./pages/QrCode";
 import QrScan from "./pages/QrScan";
+import FriendAccept from "./pages/FriendAccept";
 
 function AppContent() {
   const location = useLocation();
-  const hideNavPaths = ["/", "/login", "/signup", "/qr-code", "/qr-scan"];
+  const hideNavPaths = [
+    "/",
+    "/login",
+    "/signup",
+    "/qr-code",
+    "/qr-scan",
+    "/friend-accept",
+  ];
   const showNav = !hideNavPaths.includes(location.pathname);
 
   return (
@@ -34,6 +42,7 @@ function AppContent() {
         <Route path="/home" element={<Home />} />
         <Route path="/qr-code" element={<QrCode />} />
         <Route path="/qr-scan" element={<QrScan />} />
+        <Route path="/friend-accept" element={<FriendAccept />} />
       </Routes>
       {showNav && <BottomNav />}
     </div>

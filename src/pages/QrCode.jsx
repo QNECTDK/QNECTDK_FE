@@ -6,6 +6,16 @@ import mouseImg from "../assets/animals/mouse.png";
 import shareIcon from "../assets/icon-share.png";
 
 function QrCode() {
+  // 내 프로필 정보 (나중에는 로그인한 사용자 정보로 교체)
+  const myProfile = {
+    name: "강지수",
+    birthYear: "03년생",
+    school: "연세대학교",
+    gender: "여성",
+    mbti: "ENFP",
+  };
+
+  const qrValue = JSON.stringify(myProfile);
   const myLink = "https://forms.gle/ruK1P7kak8ghN";
 
   return (
@@ -20,15 +30,13 @@ function QrCode() {
           marginTop: "8px",
         }}
       >
-        {/* 주황 상단 바 */}
         <div
           style={{ backgroundColor: "var(--color-primary)", height: "48px" }}
         />
 
-        {/* 카드 내용 */}
         <div style={{ padding: "24px", textAlign: "center" }}>
           <div style={{ position: "relative", display: "inline-block" }}>
-            <QRCodeSVG value={myLink} size={200} />
+            <QRCodeSVG value={qrValue} size={200} />
             <div
               style={{
                 position: "absolute",
@@ -60,10 +68,10 @@ function QrCode() {
               margin: "16px 0 4px",
             }}
           >
-            강지수
+            {myProfile.name}
           </p>
           <p style={{ color: "#888", fontSize: "13px", margin: "0 0 20px" }}>
-            연세대학교 &nbsp;|&nbsp; ENFP
+            {myProfile.school} &nbsp;|&nbsp; {myProfile.mbti}
           </p>
 
           <div
@@ -88,8 +96,6 @@ function QrCode() {
             >
               {myLink}
             </span>
-
-            {/* 구분선 */}
             <div
               style={{
                 width: "1px",
@@ -98,8 +104,6 @@ function QrCode() {
                 margin: "0 12px",
               }}
             />
-
-            {/* 공유 아이콘 */}
             <img
               src={shareIcon}
               alt="공유"
