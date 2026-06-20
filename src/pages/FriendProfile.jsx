@@ -1,17 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import PageLayout from "../components/PageLayout";
 import Header from "../components/Header";
 import snakeImg from "../assets/animals/snake.png";
 import Button from "../components/Button";
 import editIcon from "../assets/icon-edit.png";
+import { getFriendMemo, updateFriendMemo } from "../api/friend";
 
 function FriendProfile() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 더미 데이터 - 나중에 API로 친구 정보 받아오면 교체
-  const friend = {
+  // 친구 본인 정보(이름/학교 등)는 FriendList의 getFriends API가 보강되면 그쪽에서 받아오도록 교체 예정
+  // 지금은 FriendList에서 navigate state로 넘겨준 값을 우선 사용하고, 없으면 더미로 대체
+  const passedFriend = location.state?.friend;
+
+  const friend = passedFriend || {
     name: "정다연",
     school: "동덕여자대학교",
     birth: "2005.03.16",
@@ -26,8 +30,12 @@ function FriendProfile() {
     quizCompleted: false,
   };
 
+  // 메모 API 호출에 필요한 친구 식별자 (FriendList 쪽에서 friendId를 넘겨줘야 함 - 아직 미확정)
+  const friendId = friend.id || friend.friendId || friend.userId;
+
   const [memo, setMemo] = useState("");
   const [isEditingMemo, setIsEditingMemo] = useState(false);
+  const [isMemoLoading, setIsMemoLoading] = useState(true);
 
   const tagColors = ["#FFD7B5", "#FFC9C9", "#D7E8FF", "#D7FFD9", "#F0D7FF"];
 
@@ -43,6 +51,52 @@ function FriendProfile() {
     { label: "취미", value: friend.hobby },
     { label: "좋아하는 음식", value: friend.favoriteFood },
   ];
+
+  // 화면 진입 시 기존 메모 불러오기
+  useEffect(() => {
+    if (!friendId) {
+      setIsMemoLoading(false);
+      return;
+    }
+
+    let isCancelled = false;
+
+    const fetchMemo = async () => {
+      try {
+        const result = await getFriendMemo(friendId);
+        if (!isCancelled) {
+          setMemo(result.data?.memo || "");
+        }
+      } catch (err) {
+        // 메모가 아직 없는 경우(404 등)도 정상 상황이라 에러 메시지는 띄우지 않음
+        console.error("메모 조회 실패", err);
+      } finally {
+        if (!isCancelled) {
+          setIsMemoLoading(false);
+        }
+      }
+    };
+
+    fetchMemo();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [friendId]);
+
+  // 메모 저장 (입력창 벗어날 때)
+  const handleMemoSave = async () => {
+    setIsEditingMemo(false);
+
+    if (!friendId) return;
+
+    try {
+      await updateFriendMemo(friendId, memo);
+    } catch (err) {
+      console.error("메모 저장 실패", err);
+      // 메모는 부가 기능이라 실패해도 화면을 막지 않고 콘솔에만 기록
+    }
+  };
 
   const handleDelete = () => {
     if (window.confirm("친구를 삭제하시겠습니까?")) {
@@ -167,7 +221,7 @@ function FriendProfile() {
           <textarea
             value={memo}
             onChange={(e) => setMemo(e.target.value)}
-            onBlur={() => setIsEditingMemo(false)}
+            onBlur={handleMemoSave}
             autoFocus
             placeholder="메모"
             style={{
@@ -188,7 +242,7 @@ function FriendProfile() {
               margin: 0,
             }}
           >
-            {memo || "메모"}
+            {isMemoLoading ? "불러오는 중..." : memo || "메모"}
           </p>
         )}
         <img
