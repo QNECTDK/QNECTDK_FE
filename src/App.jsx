@@ -43,7 +43,6 @@ function AppContent() {
         overflow: "hidden",
       }}
     >
-      {/* 상태바 영역 (시간/배터리 자리, 비워둠) */}
       <div style={{ height: "24px", flexShrink: 0 }} />
       <div
         style={{
@@ -78,6 +77,7 @@ function AppContent() {
     </div>
   );
 }
+
 function App() {
   return (
     <BrowserRouter>
@@ -85,4 +85,5 @@ function App() {
     </BrowserRouter>
   );
 }
+
 export default App;
