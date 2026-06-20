@@ -11,6 +11,10 @@ import FriendAccept from "./pages/FriendAccept";
 import MyPage from "./pages/MyPage";
 import CharacterChange from "./pages/CharacterChange";
 import InterestSelect from "./pages/InterestSelect";
+import AddFriend from "./pages/AddFriend";
+import AddFriendUrl from "./pages/AddFriendUrl";
+import FriendProfile from "./pages/FriendProfile";
+import FriendList from "./pages/FriendList";
 
 function AppContent() {
   const location = useLocation();
@@ -60,6 +64,10 @@ function AppContent() {
           <Route path="/mypage" element={<MyPage />} />
           <Route path="/character-change" element={<CharacterChange />} />
           <Route path="/interest-select" element={<InterestSelect />} />
+          <Route path="/add-friend" element={<AddFriend />} />
+          <Route path="/add-friend-url" element={<AddFriendUrl />} />
+          <Route path="/friend-profile" element={<FriendProfile />} />
+          <Route path="/friend-list" element={<FriendList />} />
         </Routes>
       </div>
 

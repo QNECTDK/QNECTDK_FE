@@ -9,32 +9,97 @@ import editIcon from "../assets/icon-edit.png";
 function MyPage() {
   const navigate = useNavigate();
 
-  const profile = {
-    name: "강지수",
-    school: "동덕여자대학교",
-    birth: "2003.04.23",
-    mbti: "ESTP",
-    drinkCapacity: "소주 3잔",
-    hobby: "음악 감상",
-    favoriteFood: "떡볶이",
-  };
+  // 회원가입 때 받은 정보 (실제로는 로그인한 사용자 데이터로 교체)
+  const [profile, setProfile] = useState({
+    name: "강지수", // 회원가입 때 받음
+    birth: "2003.04.23", // 회원가입 때 받음
+    school: "", // 회원가입 때 안 받음 → 빈칸
+    mbti: "", // 회원가입 때 안 받음 → 빈칸
+    drinkCapacity: "",
+    hobby: "",
+    favoriteFood: "",
+  });
+
+  const [editingField, setEditingField] = useState(null);
 
   const tags = ["음악감상", "밴드", "카페알바", "드라이브", "영화관람"];
   const tagColors = ["#FFD7B5", "#FFC9C9", "#D7E8FF", "#D7FFD9", "#F0D7FF"];
   const characterBgColor = "#fde3e3";
 
   const infoFields = [
-    { label: "이름", value: profile.name },
-    { label: "학교", value: profile.school },
-    { label: "생년월일", value: profile.birth },
-    { label: "MBTI", value: profile.mbti },
+    { label: "이름", key: "name" },
+    { label: "학교", key: "school" },
+    { label: "생년월일", key: "birth" },
+    { label: "MBTI", key: "mbti" },
   ];
 
   const extraFields = [
-    { label: "주량", value: profile.drinkCapacity },
-    { label: "취미", value: profile.hobby },
-    { label: "좋아하는 음식", value: profile.favoriteFood },
+    { label: "주량", key: "drinkCapacity" },
+    { label: "취미", key: "hobby" },
+    { label: "좋아하는 음식", key: "favoriteFood" },
   ];
+
+  const handleSave = (key, value) => {
+    setProfile({ ...profile, [key]: value });
+    setEditingField(null);
+  };
+
+  const renderField = (field) => {
+    const isEditing = editingField === field.key;
+    const value = profile[field.key];
+
+    return (
+      <div
+        key={field.key}
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "8px 0",
+        }}
+      >
+        <span style={{ color: "#888", fontSize: "14px" }}>{field.label}</span>
+        {isEditing ? (
+          <input
+            type="text"
+            defaultValue={value}
+            autoFocus
+            onBlur={(e) => handleSave(field.key, e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSave(field.key, e.target.value);
+            }}
+            style={{
+              fontSize: "14px",
+              border: "1px solid var(--color-primary)",
+              borderRadius: "6px",
+              padding: "2px 8px",
+              width: "140px",
+              textAlign: "right",
+            }}
+          />
+        ) : (
+          <span
+            style={{
+              fontSize: "14px",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+            }}
+          >
+            <span style={{ color: value ? "#333" : "#bbb" }}>
+              {value || "입력해주세요"}
+            </span>
+            <img
+              src={editIcon}
+              alt="편집"
+              onClick={() => setEditingField(field.key)}
+              style={{ width: "12px", height: "12px", cursor: "pointer" }}
+            />
+          </span>
+        )}
+      </div>
+    );
+  };
 
   return (
     <PageLayout>
@@ -187,37 +252,9 @@ function MyPage() {
         >
           나의 정보
         </p>
-        {infoFields.map((field) => (
-          <div
-            key={field.label}
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              padding: "8px 0",
-            }}
-          >
-            <span style={{ color: "#888", fontSize: "14px" }}>
-              {field.label}
-            </span>
-            <span style={{ fontSize: "14px" }}>{field.value} ✎</span>
-          </div>
-        ))}
+        {infoFields.map(renderField)}
         <div style={{ borderTop: "1px solid #eee", margin: "8px 0" }} />
-        {extraFields.map((field) => (
-          <div
-            key={field.label}
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              padding: "8px 0",
-            }}
-          >
-            <span style={{ color: "#888", fontSize: "14px" }}>
-              {field.label}
-            </span>
-            <span style={{ fontSize: "14px" }}>{field.value} ✎</span>
-          </div>
-        ))}
+        {extraFields.map(renderField)}
       </div>
 
       <Button

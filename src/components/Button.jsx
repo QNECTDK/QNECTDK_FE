@@ -15,13 +15,14 @@ function Button({ label, onClick, variant = "primary", size = "full" }) {
       style={{
         ...styles[variant],
         ...sizes[size],
-        borderRadius: "8px",
+        borderRadius: "20px",
         fontSize: "16px",
         textAlign: "center",
         cursor: "pointer",
         boxSizing: "border-box",
         display: "block",
         lineHeight: "1.5",
+        fontWeight: "bold",
       }}
     >
       {label}
