@@ -253,7 +253,7 @@ function Home() {
           display: "flex",
           alignItems: "center",
           gap: "14px",
-          cussor: "pointer",
+          cursor: "pointer",
         }}
       >
         <div
