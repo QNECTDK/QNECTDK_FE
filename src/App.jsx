@@ -11,6 +11,8 @@ import FriendAccept from "./pages/FriendAccept";
 import MyPage from "./pages/MyPage";
 import CharacterChange from "./pages/CharacterChange";
 import InterestSelect from "./pages/InterestSelect";
+import PointPage from "./pages/Point";
+import BuyCharacter from "./pages/BuyCharacter";
 
 function AppContent() {
   const location = useLocation();
@@ -60,6 +62,8 @@ function AppContent() {
           <Route path="/mypage" element={<MyPage />} />
           <Route path="/character-change" element={<CharacterChange />} />
           <Route path="/interest-select" element={<InterestSelect />} />
+          <Route path="/point" element={<PointPage />} />
+          <Route path="/buy-character" element={<BuyCharacter />} />
         </Routes>
       </div>
 
