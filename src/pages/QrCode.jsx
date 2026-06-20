@@ -2,7 +2,6 @@ import { QRCodeSVG } from "qrcode.react";
 import PageLayout from "../components/PageLayout";
 import Header from "../components/Header";
 import Button from "../components/Button";
-import mouseImg from "../assets/animals/mouse.png";
 import shareIcon from "../assets/icon-share.png";
 
 function QrCode() {
@@ -35,30 +34,8 @@ function QrCode() {
         />
 
         <div style={{ padding: "24px", textAlign: "center" }}>
-          <div style={{ position: "relative", display: "inline-block" }}>
+          <div style={{ display: "inline-block" }}>
             <QRCodeSVG value={qrValue} size={200} />
-            <div
-              style={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                width: "44px",
-                height: "44px",
-                borderRadius: "50%",
-                backgroundColor: "white",
-                border: "2px solid white",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <img
-                src={mouseImg}
-                alt="프로필"
-                style={{ width: "36px", height: "36px" }}
-              />
-            </div>
           </div>
 
           <p
