@@ -10,6 +10,7 @@ import selfDevIcon from "../assets/categories/self-dev.png";
 import petIcon from "../assets/categories/pet.png";
 import bookIcon from "../assets/categories/book.png";
 import movieIcon from "../assets/categories/movie.png";
+import { useNavigate } from "react-router-dom";
 
 const categories = {
   여행: ["동남아", "일본", "중국", "미국", "유럽", "캐나다", "남미", "호주"],
@@ -19,8 +20,35 @@ const categories = {
   요리: ["한식", "일식", "중식", "양식", "동남아 요리", "맛집투어"],
   자기계발: ["독서", "주식"],
   반려동물: ["강아지", "고양이", "도마뱀"],
-  독서: [],
-  영화: [],
+  독서: [
+    "철학",
+    "종교",
+    "사회과학",
+    "자연과학",
+    "기술과학",
+    "예술",
+    "언어",
+    "문학",
+    "역사",
+  ],
+  영화: [
+    "공포",
+    "로맨스",
+    "SF",
+    "액션",
+    "코미디",
+    "스릴러",
+    "범죄",
+    "가족",
+    "판타지",
+    "오컬트",
+    "누아르",
+    "음악",
+    "다큐멘터리",
+    "모험",
+    "재난",
+    "전쟁",
+  ],
 };
 
 const categoryIcons = {
@@ -36,6 +64,7 @@ const categoryIcons = {
 };
 
 function InterestSelect() {
+  const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState(null);
   const [selectedTags, setSelectedTags] = useState([]);
 
@@ -94,7 +123,10 @@ function InterestSelect() {
                 <p style={{ fontSize: "13px" }}>{cat}</p>
               </div>
             ))}
-            <div style={{ textAlign: "center", cursor: "pointer" }}>
+            <div
+              onClick={() => navigate("/interest-edit")}
+              style={{ textAlign: "center", cursor: "pointer" }}
+            >
               <div
                 style={{
                   width: "56px",

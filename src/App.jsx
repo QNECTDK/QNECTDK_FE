@@ -15,6 +15,7 @@ import AddFriend from "./pages/AddFriend";
 import AddFriendUrl from "./pages/AddFriendUrl";
 import FriendProfile from "./pages/FriendProfile";
 import FriendList from "./pages/FriendList";
+import InterestEdit from "./pages/InterestEdit";
 
 function AppContent() {
   const location = useLocation();
@@ -68,6 +69,7 @@ function AppContent() {
           <Route path="/add-friend-url" element={<AddFriendUrl />} />
           <Route path="/friend-profile" element={<FriendProfile />} />
           <Route path="/friend-list" element={<FriendList />} />
+          <Route path="/interest-edit" element={<InterestEdit />} />
         </Routes>
       </div>
 
