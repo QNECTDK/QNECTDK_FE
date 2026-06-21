@@ -49,10 +49,16 @@ export const uploadProfileImage = async (file) => {
   return response.data;
 };
 
-// 공개코드로 (다른 사람) 프로필 조회 — QR 스캔 후 사용
-// 응답 구조는 getMyProfile()과 거의 동일 (age, zodiac 등 계산된 값 포함)
+// 공개코드로 (다른 사람) 프로필 조회 — QR 스캔 후 사용// 응답 구조는 getMyProfile()과 거의 동일 (age, zodiac 등 계산된 값 포함)
 export const getProfileByPublicCode = async (publicCode) => {
   const response = await axiosInstance.get(`/api/profiles/${publicCode}`);
+  return response.data;
+};
+
+// userId로 (다른 사람) 프로필 조회 — 알림(친구 추가 등)에서 상대 프로필로 이동할 때 사용
+// 응답 구조는 getMyProfile()과 동일 (birthDate/age/zodiac 등 포함, interests/groupTags는 없음)
+export const getProfileByUserId = async (userId) => {
+  const response = await axiosInstance.get(`/api/profiles/by-user/${userId}`);
   return response.data;
 };
 

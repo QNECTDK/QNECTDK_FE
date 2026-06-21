@@ -11,36 +11,18 @@ export const getFriends = async (sort) => {
   return response.data;
 };
 
-// 친구 추가 요청 - 상대방의 userId(addresseeId)를 보냄. 즉시 친구가 되는 게 아니라
-// status: "PENDING" 상태로 생성됨. 상대방이 accept를 눌러야 진짜 친구가 됨
-export const requestFriend = async (addresseeId) => {
-  const response = await axiosInstance.post("/api/friends", {
-    addresseeId,
-  });
+// 친구 추가(수락) — QR/URL로 접속한 상대 프로필에서 '수락' 시 호출.
+// 상호 등록(나↔상대) + 첫 만남 퀴즈 알림 발송. 자기 자신은 추가 불가(400).
+// 요청: { friendId }
+export const addFriend = async (friendId) => {
+  const response = await axiosInstance.post("/api/friends", { friendId });
   return response.data;
-  // { success, data: { friendshipId, requesterId, addresseeId, status, acceptedAt, createdAt } }
+  // { success, data: { friendshipId, friendId, createdAt } }
 };
 
-// 친구 요청 수락 - 백엔드가 알아서 상대에게 알림+리마인드 예약+포인트 처리까지 함
-export const acceptFriendRequest = async (friendshipId) => {
-  const response = await axiosInstance.patch(
-    `/api/friends/${friendshipId}/accept`,
-  );
-  return response.data;
-};
-
-// 친구 요청 거절
-export const rejectFriendRequest = async (friendshipId) => {
-  const response = await axiosInstance.patch(
-    `/api/friends/${friendshipId}/reject`,
-  );
-  return response.data;
-};
-
-// 받은 친구 요청 목록
-// 응답: { success, data: [{ friendshipId, status, requestedAt, person: {...} }] }
-export const getReceivedRequests = async () => {
-  const response = await axiosInstance.get("/api/friends/requests/received");
+// 친구 삭제 — 내 쪽 관계만 끊음(상대 무영향). friendId(상대 userId) 기준.
+export const deleteFriend = async (friendId) => {
+  const response = await axiosInstance.delete(`/api/friends/${friendId}`);
   return response.data;
 };
 

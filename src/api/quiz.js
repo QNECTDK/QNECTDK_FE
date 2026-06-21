@@ -28,9 +28,10 @@ export const updateMyQuiz = async (questions) => {
 };
 
 // AI 문제 초안 생성 (저장 안 됨, 화면에서 편집 후 updateMyQuiz로 저장)
+// 백엔드 쿼리 파라미터명은 type / count (1~5). count 만큼 문항을 생성해 돌려준다.
 export const generateQuizDraft = async (quizType = "FIRST_MEET", count = 3) => {
   const response = await axiosInstance.post("/api/quizzes/me/generate", null, {
-    params: { arg1: quizType, arg2: count },
+    params: { type: quizType, count },
   });
   return response.data;
 };

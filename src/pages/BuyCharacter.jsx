@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import PageLayout from "../components/PageLayout";
 import Header from "../components/Header";
 import { getShopItems, getMyItems, purchaseItem } from "../api/shop";
+import { getPointBalance } from "../api/points";
 import { getCharacterImage, getCharacterName } from "../utils/characterMap";
 
 function BuyCharacter() {
@@ -11,18 +12,21 @@ function BuyCharacter() {
   const [selectedChar, setSelectedChar] = useState(null);
   const [shopItems, setShopItems] = useState([]);
   const [myItems, setMyItems] = useState([]);
+  const [balance, setBalance] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [shopRes, myRes] = await Promise.all([
+        const [shopRes, myRes, balanceRes] = await Promise.all([
           getShopItems(),
           getMyItems(),
+          getPointBalance(),
         ]);
         setShopItems(shopRes.data);
         setMyItems(myRes.data);
+        setBalance(balanceRes.data.balance);
       } catch (err) {
         console.error("캐릭터 목록 불러오기 실패", err);
         setErrorMessage("데이터를 불러오지 못했습니다");
@@ -45,6 +49,7 @@ function BuyCharacter() {
   const handlePayment = async () => {
     try {
       await purchaseItem(selectedChar.itemId);
+      setBalance((b) => (b != null ? b - selectedChar.price : b));
       setStep("success");
     } catch (err) {
       const code = err.response?.data?.error?.code;
@@ -233,6 +238,45 @@ function BuyCharacter() {
             >
               {selectedChar.price}P
             </span>
+          </div>
+
+          <div
+            style={{
+              width: "100%",
+              padding: "0 6px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "6px",
+              marginBottom: "20px",
+              boxSizing: "border-box",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                fontSize: "14px",
+                color: "#888",
+              }}
+            >
+              <span>현재 포인트</span>
+              <span>{balance != null ? `${balance.toLocaleString()}P` : "..."}</span>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                fontSize: "14px",
+                color: "#888",
+              }}
+            >
+              <span>남는 포인트</span>
+              <span>
+                {balance != null
+                  ? `${(balance - selectedChar.price).toLocaleString()}P`
+                  : "..."}
+              </span>
+            </div>
           </div>
 
           {errorMessage && (

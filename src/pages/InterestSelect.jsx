@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PageLayout from "../components/PageLayout";
 import Header from "../components/Header";
+import Button from "../components/Button";
 import travelIcon from "../assets/categories/travel.png";
 import exerciseIcon from "../assets/categories/exercise.png";
 import musicIcon from "../assets/categories/music.png";
@@ -275,6 +276,19 @@ function InterestSelect() {
           </div>
         </>
       )}
+
+      <div style={{ flex: 1 }} />
+      <div style={{ padding: "16px 0", flexShrink: 0 }}>
+        <Button
+          label={isSaving ? "저장 중..." : "수정 완료"}
+          onClick={async () => {
+            await saveInterests();
+            navigate(-1);
+          }}
+          variant="primary"
+          size="full"
+        />
+      </div>
     </PageLayout>
   );
 }

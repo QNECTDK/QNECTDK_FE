@@ -31,8 +31,10 @@ export const checkLoginId = async (loginId) => {
   return response.data; // { success, data: { available: true/false } }
 };
 
-// 로그아웃
+// 로그아웃 (서버에서 해당 refreshToken 무효화)
+// 백엔드 LogoutRequest.refreshToken 은 @NotBlank 이므로 반드시 본문에 담아 보낸다.
 export const logout = async () => {
-  const response = await axiosInstance.post("/api/auth/logout");
+  const refreshToken = localStorage.getItem("refreshToken");
+  const response = await axiosInstance.post("/api/auth/logout", { refreshToken });
   return response.data;
 };

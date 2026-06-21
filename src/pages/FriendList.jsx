@@ -19,7 +19,7 @@ const birthYearShort = (birthYear) => {
   return String(birthYear).slice(2, 4);
 };
 
-// 친구 캐릭터 배경색 - 디자인 다양성을 위해 순서대로 돌려씀
+// 친구 캐릭터 배경색 - 디자인 다양성을 위해 순서대로 돌려씀(캐릭터와 매칭 X)
 const bgColors = ["#dde6fb", "#fde3e3", "#dcf5dc", "#fdf3c7", "#f0d7ff"];
 const borderColors = ["#a8c0f0", "#f5b8b8", "#a8e0a8", "#f0dd8a", "#d8b8f5"];
 

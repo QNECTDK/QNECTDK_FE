@@ -5,7 +5,8 @@ import Header from "../components/Header";
 import Button from "../components/Button";
 import editIcon from "../assets/icon-edit.png";
 import trashIcon from "../assets/icon-trash.png";
-import { getFriendMemo, updateFriendMemo } from "../api/friend";
+import { getFriendMemo, updateFriendMemo, deleteFriend } from "../api/friend";
+import { getProfileByUserId } from "../api/profile";
 import { getCharacterImage } from "../utils/characterMap";
 
 // 백엔드는 gender를 "MALE"/"FEMALE"로 줌 → 화면 표시용 한글 변환
@@ -27,11 +28,39 @@ function FriendProfile() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // FriendList.jsx에서 navigate state로 person 객체 + friendshipId를 넘겨줌
-  const friend = location.state?.friend;
+  // FriendList.jsx에서 navigate state로 person 객체 + friendshipId를 넘겨줌.
+  // 알림(친구 추가)에서 진입하면 { userId }만 넘어오므로, 상세는 by-user 조회로 채운다.
+  const initialFriend = location.state?.friend;
+  const [friend, setFriend] = useState(initialFriend);
 
   // 메모 API는 friendId(=userId) 기준
   const friendId = friend?.userId;
+
+  // 상세 정보가 비어있고(userId만 있고 이름 없음) 알림 등에서 진입한 경우 프로필을 채운다.
+  useEffect(() => {
+    if (!initialFriend?.userId || initialFriend?.name) return;
+    let cancelled = false;
+    getProfileByUserId(initialFriend.userId)
+      .then((res) => {
+        if (cancelled) return;
+        const d = res.data;
+        setFriend({
+          userId: d.userId,
+          name: d.name,
+          school: d.school,
+          gender: d.gender,
+          mbti: d.mbti,
+          birthYear: d.birthDate ? Number(String(d.birthDate).slice(0, 4)) : null,
+          characterId: d.characterId,
+          interests: [],
+          friendshipId: initialFriend.friendshipId,
+        });
+      })
+      .catch((err) => console.error("프로필 조회 실패", err));
+    return () => {
+      cancelled = true;
+    };
+  }, [initialFriend]);
 
   const [memo, setMemo] = useState("");
   const [isEditingMemo, setIsEditingMemo] = useState(false);
@@ -83,11 +112,18 @@ function FriendProfile() {
     }
   };
 
-  const handleDelete = () => {
-    if (window.confirm("친구를 삭제하시겠습니까?")) {
-      // TODO: 친구 삭제 API가 별도로 있는지 확인 필요 (백엔드 문서에 명시 안 됨)
-      console.log("친구 삭제:", friend?.name);
-      navigate(-1);
+  const handleDelete = async () => {
+    if (!window.confirm("친구를 삭제하시겠습니까?")) return;
+    if (!friend?.userId) {
+      navigate("/friend-list");
+      return;
+    }
+    try {
+      await deleteFriend(friend.userId);
+      navigate("/friend-list");
+    } catch (err) {
+      console.error("친구 삭제 실패", err);
+      alert("친구 삭제에 실패했습니다.");
     }
   };
 

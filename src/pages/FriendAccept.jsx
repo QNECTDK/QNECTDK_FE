@@ -3,11 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import PageLayout from "../components/PageLayout";
 import Button from "../components/Button";
 import { getProfileByPublicCode } from "../api/profile";
-import {
-  getReceivedRequests,
-  acceptFriendRequest,
-  requestFriend,
-} from "../api/friend";
+import { addFriend } from "../api/friend";
 import { getCharacterImage } from "../utils/characterMap";
 
 // 백엔드는 gender를 "MALE"/"FEMALE"로 내려줌 → 화면 표시용 한글로 변환
@@ -24,16 +20,12 @@ function FriendAccept() {
   const publicCode = location.state?.publicCode;
 
   const [friend, setFriend] = useState(null);
-  // 이 스캔이 "이미 온 요청 수락"인지 "새 요청 보내기"인지 구분
-  // pendingFriendshipId가 있으면 → 상대가 이미 나한테 요청을 보낸 상태 → 수락만 하면 됨
-  const [pendingFriendshipId, setPendingFriendshipId] = useState(null);
-
   const [isLoading, setIsLoading] = useState(!!publicCode);
   const [errorMessage, setErrorMessage] = useState(
     publicCode ? "" : "QR 정보를 찾을 수 없습니다",
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [resultStatus, setResultStatus] = useState(null); // "accepted" | "requested" | null
+  const [resultStatus, setResultStatus] = useState(null); // "added" | null
 
   useEffect(() => {
     if (!publicCode) {
@@ -44,26 +36,9 @@ function FriendAccept() {
 
     const fetchData = async () => {
       try {
-        // 상대 프로필 조회와, 내가 받은 요청 목록 조회를 동시에 진행
-        const [profileResult, receivedResult] = await Promise.all([
-          getProfileByPublicCode(publicCode),
-          getReceivedRequests(),
-        ]);
-
+        const profileResult = await getProfileByPublicCode(publicCode);
         if (isCancelled) return;
-
-        const friendData = profileResult.data;
-        setFriend(friendData);
-
-        // 받은 요청 중에 지금 스캔한 상대가 보낸 게 있는지 확인
-        const matchingRequest = receivedResult.data.find(
-          (req) =>
-            req.requesterId === friendData.userId && req.status === "PENDING",
-        );
-
-        if (matchingRequest) {
-          setPendingFriendshipId(matchingRequest.friendshipId);
-        }
+        setFriend(profileResult.data);
       } catch (err) {
         console.error("정보 조회 실패", err);
         if (!isCancelled) {
@@ -83,20 +58,14 @@ function FriendAccept() {
     };
   }, [publicCode]);
 
-  const handleAction = async () => {
+  // 수락 → 상호 친구 등록(+첫 만남 퀴즈 알림). 거절은 그냥 화면을 벗어나면 됨(서버 호출 없음).
+  const handleAccept = async () => {
     setIsSubmitting(true);
     try {
-      if (pendingFriendshipId) {
-        // 상대가 이미 보낸 요청이 있으면 → 수락
-        await acceptFriendRequest(pendingFriendshipId);
-        setResultStatus("accepted");
-      } else {
-        // 아직 요청이 없으면 → 새로 보내기
-        await requestFriend(friend.userId);
-        setResultStatus("requested");
-      }
+      await addFriend(friend.userId);
+      setResultStatus("added");
     } catch (err) {
-      console.error("친구 처리 실패", err);
+      console.error("친구 추가 실패", err);
       setErrorMessage("처리에 실패했습니다");
     } finally {
       setIsSubmitting(false);
@@ -183,26 +152,13 @@ function FriendAccept() {
             marginBottom: "24px",
           }}
         >
-          {resultStatus === "accepted" && <>친구가 되었습니다!</>}
-          {resultStatus === "requested" && (
-            <>
-              친구 요청을 보냈습니다.
-              <br />
-              상대방도 QR을 스캔하면 친구가 돼요!
-            </>
-          )}
-          {resultStatus === null && pendingFriendshipId && (
-            <>
-              {friend.name}님이 QR을 스캔했어요.
-              <br />
-              친구가 되시겠습니까?
-            </>
-          )}
-          {resultStatus === null && !pendingFriendshipId && (
+          {resultStatus === "added" ? (
+            <>친구가 되었습니다!</>
+          ) : (
             <>
               QR을 스캔했습니다.
               <br />
-              친구 요청을 보내시겠습니까?
+              {friend.name}님을 친구로 추가하시겠습니까?
             </>
           )}
         </p>
@@ -222,19 +178,22 @@ function FriendAccept() {
               size="full"
             />
           ) : (
-            <Button
-              label={
-                isSubmitting
-                  ? "처리 중..."
-                  : pendingFriendshipId
-                    ? "수락하기"
-                    : "친구 요청 보내기"
-              }
-              onClick={handleAction}
-              variant="primary"
-              size="full"
-              disabled={isSubmitting}
-            />
+            <>
+              <Button
+                label={isSubmitting ? "처리 중..." : "수락"}
+                onClick={handleAccept}
+                variant="primary"
+                size="full"
+                disabled={isSubmitting}
+              />
+              <div style={{ height: "10px" }} />
+              <Button
+                label="거절"
+                onClick={() => navigate(-1)}
+                variant="secondary"
+                size="full"
+              />
+            </>
           )}
         </div>
       </div>

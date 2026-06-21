@@ -6,6 +6,10 @@ import Button from "../components/Button";
 import { getFriendsQuizzes } from "../api/quiz"; // TODO: 실제 함수명에 맞게 수정
 import { getCharacterImage } from "../utils/characterMap";
 
+// 캐릭터 배경색 - 순서대로 돌려씀(캐릭터와 매칭 X)
+const bgColors = ["#dde6fb", "#fde3e3", "#dcf5dc", "#fdf3c7", "#f0d7ff"];
+const borderColors = ["#a8c0f0", "#f5b8b8", "#a8e0a8", "#f0dd8a", "#d8b8f5"];
+
 function Quiz() {
   const navigate = useNavigate();
   const [friendList, setFriendList] = useState([]);
@@ -28,6 +32,7 @@ function Quiz() {
             school: item.person.school,
             gender: item.person.gender,
             birthYear: item.person.birthYear,
+            characterId: item.person.characterId,
             animalImg: getCharacterImage(item.person.characterId),
             total: item.totalQuestions,
             solved: item.attempted ? item.score : 0,
@@ -76,7 +81,9 @@ function Quiz() {
           </p>
         )}
 
-        {friendList.map((f) => (
+        {friendList.map((f, idx) => {
+          const colorIdx = idx % bgColors.length;
+          return (
           <div
             key={f.userId}
             style={{
@@ -93,7 +100,7 @@ function Quiz() {
                   width: "60px",
                   height: "60px",
                   borderRadius: "50%",
-                  backgroundColor: "#ffffff",
+                  backgroundColor: bgColors[colorIdx],
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -111,9 +118,19 @@ function Quiz() {
                 />
               </div>
               <div>
-                <div style={{ fontWeight: "bold", fontSize: "16px" }}>
+                <span
+                  style={{
+                    display: "inline-block",
+                    backgroundColor: bgColors[colorIdx],
+                    border: `1px solid ${borderColors[colorIdx]}`,
+                    borderRadius: "6px",
+                    padding: "2px 10px",
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                  }}
+                >
                   {f.name}
-                </div>
+                </span>
                 <div style={{ display: "flex", gap: "5px", marginTop: "8px" }}>
                   {[...Array(f.total)].map((_, idx) => (
                     <div
@@ -142,7 +159,8 @@ function Quiz() {
               }}
             />
           </div>
-        ))}
+          );
+        })}
       </div>
     </PageLayout>
   );
