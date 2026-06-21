@@ -7,6 +7,8 @@ import { getNotifications, markNotificationRead } from "../api/notification";
 // type에 따라 메시지 텍스트 변환
 const getNotificationMessage = (type) => {
   switch (type) {
+    case "FRIEND_REQUEST":
+      return "새로운 친구 요청이 도착했어요!\n받은 친구 요청을 확인해보세요.";
     case "FRIEND_ADD":
       return "새로운 친구가 추가되었습니다!";
     case "DAILY_QUIZ":
@@ -18,17 +20,22 @@ const getNotificationMessage = (type) => {
   }
 };
 
-// type에 따라 이동할 경로 결정
-const getNotificationPath = (type, refId) => {
+// type + refId에 따라 이동할 화면 결정 → { path, state }
+// FRIEND_ADD: refId=상대 userId → 그 사람 프로필로 이동
+// FRIEND_REQUEST: 받은 요청 관리(현재는 친구 목록)로 이동
+// DAILY_QUIZ: 홈(오늘의 퀴즈) / QUIZ_REMIND: 퀴즈 목록
+const getNotificationTarget = (type, refId) => {
   switch (type) {
     case "FRIEND_ADD":
-      return "/friend-list";
+      return { path: "/friend-profile", state: { friend: { userId: refId } } };
+    case "FRIEND_REQUEST":
+      return { path: "/friend-list", state: undefined };
     case "DAILY_QUIZ":
-      return "/home";
+      return { path: "/home", state: undefined };
     case "QUIZ_REMIND":
-      return "/home";
+      return { path: "/quiz", state: undefined };
     default:
-      return "/home";
+      return { path: "/home", state: undefined };
   }
 };
 
@@ -71,8 +78,9 @@ function Notification() {
           n.notificationId === notificationId ? { ...n, isRead: true } : n,
         ),
       );
-      // 읽음 처리 후 해당 페이지로 이동
-      navigate(getNotificationPath(type, refId));
+      // 읽음 처리 후 해당 화면으로 이동 (FRIEND_ADD는 그 사람 프로필로)
+      const { path, state } = getNotificationTarget(type, refId);
+      navigate(path, state ? { state } : undefined);
     } catch (err) {
       console.error("읽음 처리 실패", err);
     }

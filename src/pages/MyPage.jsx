@@ -5,6 +5,8 @@ import Header from "../components/Header";
 import Button from "../components/Button";
 import editIcon from "../assets/icon-edit.png";
 import { getMyProfile, updateMyProfile } from "../api/profile";
+import { getMyInterests } from "../api/interest";
+import { logout } from "../api/auth";
 import { getCharacterImage } from "../utils/characterMap";
 
 // 프로필 이미지 표시 우선순위: 사용자 업로드 사진(imageUrl) > 적용된 캐릭터(characterId) > 기본 띠 캐릭터
@@ -36,8 +38,8 @@ function MyPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [editingField, setEditingField] = useState(null);
+  const [interests, setInterests] = useState([]);
 
-  const tags = ["음악감상", "밴드", "카페알바", "드라이브", "영화관람"];
   const tagColors = ["#FFD7B5", "#FFC9C9", "#D7E8FF", "#D7FFD9", "#F0D7FF"];
   const characterBgColor = "#fde3e3";
 
@@ -55,6 +57,13 @@ function MyPage() {
     };
 
     fetchProfile();
+  }, []);
+
+  // 관심사 목록 로드 (프로필 화면 태그 표시용). 관심사 편집 화면에서 바꾸면 여기에 반영됨.
+  useEffect(() => {
+    getMyInterests()
+      .then((res) => setInterests(res.data || []))
+      .catch((err) => console.error("관심사 조회 실패", err));
   }, []);
 
   // 서버에 수정 가능한 필드: school, gender, mbti, drinkLevel, favoriteFood
@@ -114,6 +123,19 @@ function MyPage() {
     } catch (err) {
       console.error("프로필 수정 실패", err);
       setErrorMessage("저장에 실패했습니다. 다시 시도해주세요");
+    }
+  };
+
+  // 로그아웃: 서버에서 refreshToken 무효화(베스트 에포트) 후 토큰 제거 + 로그인 화면으로
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (err) {
+      console.error("로그아웃 요청 실패", err);
+    } finally {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      navigate("/login");
     }
   };
 
@@ -366,26 +388,33 @@ function MyPage() {
         >
           +
         </div>
-        {tags.map((tag, i) => (
-          <span
-            key={tag}
-            style={{
-              backgroundColor: tagColors[i % tagColors.length],
-              border: "1px solid black",
-              borderRadius: "20px",
-              width: "61px",
-              height: "23px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "11px",
-              flexShrink: 0,
-              boxSizing: "border-box",
-            }}
-          >
-            {tag}
+        {interests.length === 0 ? (
+          <span style={{ fontSize: "12px", color: "#bbb" }}>
+            관심사를 추가해보세요
           </span>
-        ))}
+        ) : (
+          interests.map((interest, i) => (
+            <span
+              key={interest.id}
+              style={{
+                backgroundColor: tagColors[i % tagColors.length],
+                border: "1px solid black",
+                borderRadius: "20px",
+                padding: "0 12px",
+                height: "23px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "11px",
+                flexShrink: 0,
+                boxSizing: "border-box",
+                whiteSpace: "nowrap",
+              }}
+            >
+              #{interest.name}
+            </span>
+          ))
+        )}
       </div>
 
       <div
@@ -421,6 +450,13 @@ function MyPage() {
         label="퀴즈 생성"
         onClick={() => navigate("/quiz-create")}
         variant="primary"
+        size="full"
+      />
+      <div style={{ height: "10px", flexShrink: 0 }} />
+      <Button
+        label="로그아웃"
+        onClick={handleLogout}
+        variant="secondary"
         size="full"
       />
       <div style={{ height: "120px", flexShrink: 0 }} />

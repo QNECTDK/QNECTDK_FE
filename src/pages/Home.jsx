@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PageLayout from "../components/PageLayout";
 import TopBar from "../components/TopBar";
-import mouseImg from "../assets/animals/mouse.png";
 import seaImg from "../assets/sea.png";
 import mountainImg from "../assets/mountain.png";
 import refreshIcon from "../assets/icon-refresh.png";
 import { getTodayQuiz, submitTodayAnswer } from "../api/daily";
+import { getTodayReminder } from "../api/quiz";
+import { checkAttendance, getPointBalance } from "../api/points";
+import { getCharacterImage } from "../utils/characterMap";
 
 function Home() {
   const navigate = useNavigate();
@@ -15,6 +17,9 @@ function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [reminder, setReminder] = useState(null); // { person, hasQuiz, quizId } | null
+  const [streak, setStreak] = useState(null);
+  const [balance, setBalance] = useState(null);
 
   useEffect(() => {
     const fetchQuiz = async () => {
@@ -30,7 +35,44 @@ function Home() {
     };
 
     fetchQuiz();
+
+    // 리마인드 카드 (이 사람을 기억하나요?) — 대상 없으면 data=null
+    getTodayReminder()
+      .then((res) => setReminder(res.data))
+      .catch((err) => console.error("리마인드 조회 실패", err));
+
+    // 출석 체크 (앱 진입 시 1회 자동) → 연속일 + 잔액 반영
+    checkAttendance()
+      .then((res) => {
+        setStreak(res.data.streak);
+        setBalance(res.data.currentBalance);
+      })
+      .catch(() => {
+        getPointBalance()
+          .then((res) => setBalance(res.data.balance))
+          .catch((err) => console.error("포인트 조회 실패", err));
+      });
   }, []);
+
+  // 리마인드 카드 클릭 → 해당 친구 퀴즈 풀기 확인 화면으로
+  const handleReminderClick = () => {
+    const p = reminder?.person;
+    if (!p || !reminder?.hasQuiz) return;
+    navigate("/quiz-confirm", {
+      state: {
+        friend: {
+          userId: p.userId,
+          name: p.name,
+          school: p.school,
+          gender: p.gender,
+          birthYear: p.birthYear,
+          characterId: p.characterId,
+          animalImg: getCharacterImage(p.characterId),
+          quizId: reminder.quizId,
+        },
+      },
+    });
+  };
 
   const handleSelect = async (selected) => {
     if (quiz?.answered || isSubmitting) return; // 이미 답했으면 다시 제출 안 함
@@ -40,6 +82,10 @@ function Home() {
       await submitTodayAnswer(selected);
       // 제출 성공하면 화면 상태를 "답변 완료"로 갱신
       setQuiz((prev) => ({ ...prev, answered: true, mySelection: selected }));
+      // 데일리 답변 +5P 적립 → 포인트 현황 갱신
+      getPointBalance()
+        .then((res) => setBalance(res.data.balance))
+        .catch((err) => console.error("포인트 갱신 실패", err));
     } catch (err) {
       console.error("퀴즈 답변 제출 실패", err);
       setErrorMessage("답변 제출에 실패했습니다");
@@ -52,8 +98,10 @@ function Home() {
     <PageLayout>
       <TopBar />
 
-      {/* 이 사람을 기억하나요 카드 - 친구 인식 퀴즈, 별도 API 그룹이라 더미 유지 */}
+      {/* 이 사람을 기억하나요 카드 - 리마인드 대상이 있을 때만 노출 */}
+      {reminder?.person && (
       <div
+        onClick={handleReminderClick}
         style={{
           backgroundColor: "#eaf3ff",
           border: "2px solid #cfe2ff",
@@ -63,6 +111,7 @@ function Home() {
           justifyContent: "space-between",
           alignItems: "center",
           marginBottom: "20px",
+          cursor: reminder?.person && reminder?.hasQuiz ? "pointer" : "default",
         }}
       >
         <div style={{ textAlign: "left" }}>
@@ -84,49 +133,42 @@ function Home() {
               textAlign: "left",
             }}
           >
-            퀴즈로 기억을 테스트해보세요.
+            {reminder?.person
+              ? "퀴즈로 기억을 테스트해보세요."
+              : "오늘은 복습할 친구가 없어요."}
           </p>
-          <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
-            <span
-              style={{
-                backgroundColor: "white",
-                border: "1px solid #ddd",
-                borderRadius: "20px",
-                padding: "3px 10px",
-                fontSize: "12px",
-                fontWeight: "bold",
-                whiteSpace: "nowrap",
-              }}
-            >
-              이무영
-            </span>
-            <span
-              style={{
-                backgroundColor: "#f5f5f5",
-                border: "none",
-                borderRadius: "20px",
-                padding: "3px 8px",
-                fontSize: "10px",
-                color: "#888",
-                whiteSpace: "nowrap",
-              }}
-            >
-              멋쟁이사자처럼
-            </span>
-            <span
-              style={{
-                backgroundColor: "#f5f5f5",
-                border: "none",
-                borderRadius: "20px",
-                padding: "3px 8px",
-                fontSize: "10px",
-                color: "#888",
-                whiteSpace: "nowrap",
-              }}
-            >
-              인하대학교
-            </span>
-          </div>
+          {reminder?.person && (
+            <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
+              <span
+                style={{
+                  backgroundColor: "white",
+                  border: "1px solid #ddd",
+                  borderRadius: "20px",
+                  padding: "3px 10px",
+                  fontSize: "12px",
+                  fontWeight: "bold",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {reminder.person.name}
+              </span>
+              {reminder.person.school && (
+                <span
+                  style={{
+                    backgroundColor: "#f5f5f5",
+                    border: "none",
+                    borderRadius: "20px",
+                    padding: "3px 8px",
+                    fontSize: "10px",
+                    color: "#888",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {reminder.person.school}
+                </span>
+              )}
+            </div>
+          )}
         </div>
         <div
           style={{
@@ -141,20 +183,23 @@ function Home() {
             overflow: "hidden",
           }}
         >
-          <img
-            src={mouseImg}
-            alt="이무영"
-            style={{
-              width: "60px",
-              height: "60px",
-              objectFit: "contain",
-              display: "block",
-            }}
-          />
+          {reminder?.person && (
+            <img
+              src={getCharacterImage(reminder.person.characterId)}
+              alt={reminder.person.name}
+              style={{
+                width: "60px",
+                height: "60px",
+                objectFit: "contain",
+                display: "block",
+              }}
+            />
+          )}
         </div>
       </div>
+      )}
 
-      {/* 출석 배너 - 별도 API 그룹(알림/출석), 더미 유지 */}
+      {/* 출석 배너 - 출석 API(streak) 연동 */}
       <div
         style={{
           backgroundColor: "#e3d7fb",
@@ -172,7 +217,7 @@ function Home() {
           gap: "8px",
         }}
       >
-        출석 31일 째
+        출석 {streak != null ? streak : "-"}일 째
         <img
           src={refreshIcon}
           alt="새로고침"
@@ -385,7 +430,7 @@ function Home() {
               textAlign: "left",
             }}
           >
-            1,250P
+            {balance != null ? `${balance.toLocaleString()}P` : "..."}
           </p>
           <p
             style={{

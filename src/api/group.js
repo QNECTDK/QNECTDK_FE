@@ -28,7 +28,7 @@ export const createGroupWithMembers = async ({ name, hashtags, friendIds }) => {
 };
 
 // 그룹 수정
-// 요청: { name, hashtags[] }
+// 요청: { name, hashtags } — hashtags는 "#a #b" 형태의 통짜 문자열(백엔드 GroupUpdateRequest)
 export const updateGroup = async (groupId, { name, hashtags }) => {
   const response = await axiosInstance.put(`/api/groups/${groupId}`, {
     name,

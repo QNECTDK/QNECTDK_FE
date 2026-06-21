@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import PageLayout from "../components/PageLayout";
 import Header from "../components/Header";
+import Button from "../components/Button";
 import travelIcon from "../assets/categories/travel.png";
 import exerciseIcon from "../assets/categories/exercise.png";
 import musicIcon from "../assets/categories/music.png";
@@ -261,6 +262,13 @@ function InterestEdit() {
         })}
       </div>
 
+      <div style={{ height: "16px", flexShrink: 0 }} />
+      <Button
+        label={isSaving ? "저장 중..." : "수정 완료"}
+        onClick={handleBack}
+        variant="primary"
+        size="full"
+      />
       <div style={{ height: "90px", flexShrink: 0 }} />
     </PageLayout>
   );

@@ -148,12 +148,15 @@ function QuizCreate() {
     );
   };
 
-  // AI 문제 초안 생성
+  // AI 문제 초안 생성 (문항 수는 3~5개 랜덤)
   const handleGenerate = async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await generateQuizDraft("FIRST_MEET", 3);
+      const count =
+        Math.floor(Math.random() * (MAX_QUESTIONS - MIN_QUESTIONS + 1)) +
+        MIN_QUESTIONS; // 3~5
+      const res = await generateQuizDraft("FIRST_MEET", count);
       setQuestions(draftToState(res.data.questions));
       setStep(2);
     } catch (err) {
