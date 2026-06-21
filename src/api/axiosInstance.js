@@ -6,6 +6,10 @@ const axiosInstance = axios.create({
   baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
+    // ngrok 무료 터널의 브라우저 경고 인터스티셜(ERR_NGROK_6024) 우회 →
+    // 이 헤더가 있으면 ngrok이 HTML 안내 페이지 대신 백엔드로 바로 프록시한다.
+    // (ngrok이 아닌 환경에선 무시되는 헤더라 운영에도 무해)
+    "ngrok-skip-browser-warning": "true",
   },
 });
 
@@ -66,9 +70,11 @@ axiosInstance.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const response = await axios.post(`${BASE_URL}/api/auth/refresh`, {
-          refreshToken,
-        });
+        const response = await axios.post(
+          `${BASE_URL}/api/auth/refresh`,
+          { refreshToken },
+          { headers: { "ngrok-skip-browser-warning": "true" } },
+        );
 
         const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
           response.data.data;
