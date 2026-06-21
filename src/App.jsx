@@ -1,122 +1,108 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import Splash from "./pages/Splash";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import VoteResult from "./pages/VoteResult";
+import BottomNav from "./components/BottomNav";
+import Home from "./pages/Home";
+import QrCode from "./pages/QrCode";
+import QrScan from "./pages/QrScan";
+import FriendAccept from "./pages/FriendAccept";
+import MyPage from "./pages/MyPage";
+import CharacterChange from "./pages/CharacterChange";
+import InterestSelect from "./pages/InterestSelect";
+import PointPage from "./pages/Point";
+import BuyCharacter from "./pages/BuyCharacter";
+import AddFriend from "./pages/AddFriend";
+import AddFriendUrl from "./pages/AddFriendUrl";
+import FriendProfile from "./pages/FriendProfile";
+import FriendList from "./pages/FriendList";
+import InterestEdit from "./pages/InterestEdit";
+import Quiz from "./pages/Quiz";
+import QuizConfirm from "./pages/QuizConfirm";
+import QuizSolve from "./pages/QuizSolve";
+import QuizResult from "./pages/QuizResult";
+import GroupList from "./pages/GroupList";
+import GroupDetail from "./pages/GroupDetail";
+import GroupCreate from "./pages/GroupCreate";
+import Notification from "./pages/Notification";
+import QuizCreate from "./pages/QuizCreate";
 
-function App() {
-  const [count, setCount] = useState(0)
+function AppContent() {
+  const location = useLocation();
+  const hideNavPaths = [
+    "/",
+    "/login",
+    "/signup",
+    "/qr-code",
+    "/qr-scan",
+    "/friend-accept",
+  ];
+  const showNav = !hideNavPaths.includes(location.pathname);
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+    <div
+      style={{
+        width: "393px",
+        height: "852px",
+        margin: "0 auto",
+        boxShadow: "0 0 20px rgba(0,0,0,0.1)",
+        display: "flex",
+        flexDirection: "column",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      <div style={{ height: "24px", flexShrink: 0 }} />
+      <div
+        style={{
+          flex: 1,
+          minHeight: 0,
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <Routes>
+          <Route path="/" element={<Splash />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/vote-result" element={<VoteResult />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/qr-code" element={<QrCode />} />
+          <Route path="/qr-scan" element={<QrScan />} />
+          <Route path="/friend-accept" element={<FriendAccept />} />
+          <Route path="/mypage" element={<MyPage />} />
+          <Route path="/character-change" element={<CharacterChange />} />
+          <Route path="/interest-select" element={<InterestSelect />} />
+          <Route path="/point" element={<PointPage />} />
+          <Route path="/buy-character" element={<BuyCharacter />} />
+          <Route path="/add-friend" element={<AddFriend />} />
+          <Route path="/add-friend-url" element={<AddFriendUrl />} />
+          <Route path="/friend-profile" element={<FriendProfile />} />
+          <Route path="/friend-list" element={<FriendList />} />
+          <Route path="/interest-edit" element={<InterestEdit />} />
+          <Route path="/quiz" element={<Quiz />} />
+          <Route path="/quiz-confirm" element={<QuizConfirm />} />
+          <Route path="/quiz-solve" element={<QuizSolve />} />
+          <Route path="/quiz-result" element={<QuizResult />} />
+          <Route path="/group-list" element={<GroupList />} />
+          <Route path="/group-detail/:id" element={<GroupDetail />} />
+          <Route path="/group-create" element={<GroupCreate />} />
+          <Route path="/notification" element={<Notification />} />
+          <Route path="/quiz-create" element={<QuizCreate />} />
+        </Routes>
+      </div>
+      {showNav && <BottomNav />}
+    </div>
+  );
 }
 
-export default App
+function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
+  );
+}
+
+export default App;

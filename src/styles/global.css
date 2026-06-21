@@ -6,9 +6,48 @@
   --color-border: #eeeeee;
 }
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
 body {
   margin: 0;
   background-color: var(--color-background);
   color: var(--color-text);
   font-family: "Pretendard", sans-serif;
+}
+
+/*아이폰 16 크기입니당*/
+.iphone16 {
+  width: 393px; /* 아이폰 16 가로 규격 */
+  height: 852px; /* 아이폰 16 세로 규격 */
+  background-color: #ffffff;
+  margin: 0 auto;
+  position: relative;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+#qr-reader video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+}
+
+#qr-reader__dashboard,
+#qr-reader__header_message {
+  display: none !important;
+}
+
+.tag-scroll::-webkit-scrollbar {
+  display: none;
+}
+.tag-scroll {
+  scrollbar-width: none;
 }

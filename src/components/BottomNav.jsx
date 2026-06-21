@@ -1,22 +1,40 @@
+import { useNavigate } from "react-router-dom";
+import {
+  NavContainer,
+  NavBtn,
+  NavIcon,
+  QrBtn,
+} from "../styles/styledBottomNav";
+
 function BottomNav() {
+  const navigate = useNavigate();
+
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-around",
-        padding: "12px 0",
-        borderTop: "1px solid #eee",
-        position: "fixed",
-        bottom: 0,
-        width: "100%",
-        backgroundColor: "white",
-      }}
-    >
-      <button>홈</button>
-      <button>친구</button>
-      <button>퀴즈</button>
-      <button>프로필</button>
-    </div>
+    <NavContainer>
+      <NavBtn onClick={() => navigate("/home")}>
+        <NavIcon src="/images/nav-home.svg" alt="홈" />
+      </NavBtn>
+
+      <NavBtn onClick={() => navigate("/friend-list")}>
+        <NavIcon src="/images/nav-friend.svg" alt="친구" />
+      </NavBtn>
+
+      <QrBtn onClick={() => navigate("/qr-code")}>
+        <img
+          src="/images/nav-qr.svg"
+          alt="QR코드"
+          style={{ width: "32px", height: "32px" }}
+        />
+      </QrBtn>
+
+      <NavBtn onClick={() => navigate("/quiz")}>
+        <NavIcon src="/images/nav-quiz.svg" alt="퀴즈" />
+      </NavBtn>
+
+      <NavBtn onClick={() => navigate("/mypage")}>
+        <NavIcon src="/images/nav-profile.svg" alt="프로필" />
+      </NavBtn>
+    </NavContainer>
   );
 }
 
