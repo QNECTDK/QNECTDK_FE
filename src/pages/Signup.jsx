@@ -215,7 +215,7 @@ function Signup() {
           marginBottom: "16px",
         }}
       >
-        ✓ 8자 이상 &nbsp; ✓ 영문,숫자 &nbsp; ✓ 특수문자 포함
+        ✓ 8자 이상 &nbsp; ✓ 영문·숫자 필수 &nbsp; ✓ 특수문자 사용 가능
       </p>
 
       <Input

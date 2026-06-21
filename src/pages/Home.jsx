@@ -98,8 +98,7 @@ function Home() {
     <PageLayout>
       <TopBar />
 
-      {/* 이 사람을 기억하나요 카드 - 리마인드 대상이 있을 때만 노출 */}
-      {reminder?.person && (
+      {/* 이 사람을 기억하나요 카드 - 대상 없으면 안내 문구로 자리 유지 */}
       <div
         onClick={handleReminderClick}
         style={{
@@ -170,20 +169,20 @@ function Home() {
             </div>
           )}
         </div>
-        <div
-          style={{
-            width: "80px",
-            height: "80px",
-            borderRadius: "50%",
-            backgroundColor: "#d6e7fb",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-            overflow: "hidden",
-          }}
-        >
-          {reminder?.person && (
+        {reminder?.person && (
+          <div
+            style={{
+              width: "80px",
+              height: "80px",
+              borderRadius: "50%",
+              backgroundColor: "#d6e7fb",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+              overflow: "hidden",
+            }}
+          >
             <img
               src={getCharacterImage(reminder.person.characterId)}
               alt={reminder.person.name}
@@ -194,10 +193,9 @@ function Home() {
                 display: "block",
               }}
             />
-          )}
-        </div>
+          </div>
+        )}
       </div>
-      )}
 
       {/* 출석 배너 - 출석 API(streak) 연동 */}
       <div
